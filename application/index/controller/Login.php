@@ -30,7 +30,7 @@ class Login extends Controller{
             if(!$res){
                 $this->error('用户名错误');
             }
-            if($res['password']!=$password){
+            if($res['password']!=encrypt($password)){
                 $this->error('密码错误');
             }else{
                 Session::set('user_id',$res['user_id']);

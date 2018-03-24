@@ -14,16 +14,19 @@ use think\Request;
 use think\Session;
 use think\Url;
 
-class User extends Controller{
+class User extends Base {
     public function index(){
         $user_id=Session::get('user_id');
         $res=\db('user')->where(['user_id'=>$user_id])->find();
         $result=\db('user')->where(['status'=>1])->order('user_id desc')->paginate(10);
         return $this->fetch('index',['result'=>$result,'res'=>$res]);
     }
+
+    /**
+     * @return mixed
+     * 添加用户
+     */
     public function add(){
-
-
         if(Request::instance()->isPost()){
             $post=Request::instance()->post();
             if($post['password'] != $post['re_password']){
@@ -45,7 +48,7 @@ class User extends Controller{
                 exit;
             }
             $data['username']=$post['username'];
-            $data['password']=$post['password'];
+            $data['password']=encrypt($post['password']);
             $data['uuid']=Uuid::uuid4()->toString();
             $res=\db('user')->insert($data);
             if($res){
@@ -60,6 +63,11 @@ class User extends Controller{
         }
         return $this->fetch('add');
     }
+
+    /**
+     * @return mixed
+     * 修改用户
+     */
     public function edit(){
         $user_id=Request::instance()->param('user_id');
         $result=\db('user')->where(['user_id'=>$user_id])->find();
@@ -96,6 +104,9 @@ class User extends Controller{
         return $this->fetch('edit',['res'=>$result]);
     }
 
+    /**
+     * 删除用户
+     */
     public function del(){
         $user_id=Request::instance()->param('user_id');
         $result=\db('user')->where(['user_id'=>$user_id])->update(['status'=>0]);

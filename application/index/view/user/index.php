@@ -44,8 +44,6 @@
                                 <th width="100">ID</th>
                                 <th width="100">用户名</th>
                                 <th width="100">UUID</th>
-                                <th width="100">支付宝回调地址</th>
-                                <th width="100">微信回调地址</th>
                                 <th width="100">操作</th>
                             </tr>
                             </thead>
@@ -56,8 +54,6 @@
                                     <td><?php echo $item['user_id']?></td>
                                     <td><?php echo $item['username']?></td>
                                     <td><?php echo $item['uuid']?></td>
-                                    <td><?php echo $item['ali_url']?></td>
-                                    <td><?php echo $item['we_url']?></td>
                                     <td>
                                         <a style="text-decoration:none" class="fa fa-edit" onClick="member_edit('修改用户','{:Url('user/edit',['user_id'=>$item['user_id']])}')" href="javascript:;" title="修改用户"></a>
                                         <a style="text-decoration:none" class="fa fa-times"   onClick="picture_del(this,'{:Url('user/del',['user_id'=>$item['user_id']])}')" href="javascript:;" title="删除"></a>
