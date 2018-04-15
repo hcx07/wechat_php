@@ -201,6 +201,7 @@
         // 文件上传成功，给item添加成功class, 用样式标记上传成功。
         vi_uploader.on( 'uploadSuccess', function( file,res ) {
             var url = res.data;
+            console.log(re);
             vi_count+=1;
             $( '#'+file.id).find("img").attr("src",url);
             $( '#'+file.id).find("input").val(url);
