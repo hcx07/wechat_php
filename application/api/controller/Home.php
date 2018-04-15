@@ -24,6 +24,9 @@ class Home extends Controller
      */
     public function  get_article(){
         $res=db('article')->where(['status'=>0])->order('add_time desc')->limit(5)->select();
+        foreach ($res as &$item){
+            $item['content']=mb_substr(strip_tags($item['content']),0,100) ;
+        }
         json_return($res);
     }
 
