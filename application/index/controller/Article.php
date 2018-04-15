@@ -23,14 +23,7 @@ class Article extends Base{
     public function add(){
         if(Request::instance()->isPost()){
             $post=Request::instance()->post();
-            if($post['password'] != $post['re_password']){
-                $this->error('两次输入密码不一致！');
-                exit;
-            }
-            if(strlen($post['password']) < 6){
-                $this->error('密码最少为6位数！');
-                exit;
-            }
+            var_dump($post);exit;
             $result=preg_match('/^[\x{ff08}-\x{ff09}a-zA-Z\d\x{4e00}-\x{9fa5}]{3,50}$/u',$post['username'],$matches);
             if($result==0){
                 $this->error('用户名由字母，数字，括号和汉字组成且在3-50字符内。！');
@@ -57,25 +50,5 @@ class Article extends Base{
         }
         return $this->fetch('add',['banner'=>[]]);
     }
-    /**
-     * 图片上传
-     */
-    public function upload(){
-        // 获取表单上传文件 例如上传了001.jpg
-        $file = request()->file('Images');
-        var_dump($file);exit;
 
-        // 移动到框架应用根目录/public/uploads/ 目录下
-        if($file){
-            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
-            if($info){
-                // 成功上传后 获取上传信息
-                // 输出 jpg
-                jsonReturn(200,$info->getExtension());
-            }else{
-                // 上传失败获取错误信息
-                echo $file->getError();
-            }
-        }
-    }
 }
