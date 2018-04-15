@@ -15,7 +15,7 @@ class Home extends Controller
      * 获取当前服务器时间
      */
     public function get_time(){
-        $time=date('Y-m-d');
+        $time=date('m月d日');
         $week_str= "星期" . mb_substr( "天一二三四五六",date("w"),1,"utf-8" );
         json_return($time.' '.$week_str);
     }
