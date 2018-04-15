@@ -17,7 +17,7 @@
  * @param null $data
  * 返回数据
  */
-function get_op_put($status = 200, $msg = '', $data)
+function json_return($data,$msg = '',$status = 200)
 {
     header('Content-type: application/json');
     if (!isset($data)) {
@@ -39,7 +39,7 @@ function get_op_put($status = 200, $msg = '', $data)
  */
 function is_mobile($mobile)
 {
-    if (preg_match('/^1[34578]{1}\d{9}$/', $mobile)) {
+    if (preg_match('/^1\d{10}$/', $mobile)) {
         return true;
     } else {
         return false;
