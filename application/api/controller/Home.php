@@ -19,5 +19,12 @@ class Home extends Controller
         $week_str= "星期" . mb_substr( "天一二三四五六",date("w"),1,"utf-8" );
         json_return($time.' '.$week_str);
     }
+    /**
+     * 获取文章
+     */
+    public function  get_article(){
+        $res=db('article')->where(['status'=>0])->order('add_time desc')->limit(5)->select();
+        json_return($res);
+    }
 
 }

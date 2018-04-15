@@ -7,8 +7,7 @@
         <div class="page-title">
 
             <div class="title_left">
-                <small><a class="btn btn-primary radius" onclick="picture_add('添加文章','{:Url('article/add')}')" href="javascript:;">
-                        添加文章</a></small>
+                <small><a class="btn btn-primary radius" onclick="picture_add('添加文章','{:Url('article/add')}')" href="javascript:;">添加文章</a></small>
             </div>
 
             <div class="title_right">
@@ -43,8 +42,9 @@
                             <tr>
                                 <th width="100">ID</th>
                                 <th width="100">标题</th>
-                                <th width="100">图片</th>
+                                <th width="20">图片</th>
                                 <th width="100">添加时间</th>
+                                <th width="100">用户</th>
                                 <th width="100">操作</th>
                             </tr>
                             </thead>
@@ -55,11 +55,11 @@
                                     <td><?php echo $item['article_id']?></td>
                                     <td><?php echo $item['title']?></td>
                                     <td><img src="<?php echo $item['img']?>" style="width: 20%"></td>
-                                    <td><?php echo $data('Y-m-d H:i:s',$item['add_time'])?></td>
+                                    <td><?php echo date('Y-m-d H:i:s',$item['add_time'])?></td>
+                                    <td><?php echo $item['username']?></td>
                                     <td>
-                                        <a style="text-decoration:none" class="fa fa-edit" onClick="member_edit('修改用户','{:Url('user/edit',['user_id'=>$item['user_id']])}')" href="javascript:;" title="修改用户"></a>
-                                        <a style="text-decoration:none" class="fa fa-times"   onClick="picture_del(this,'{:Url('user/del',['user_id'=>$item['user_id']])}')" href="javascript:;" title="删除"></a>
-                                        <a style="text-decoration:none" class="fa fa-newspaper-o" onClick="member_edit('修改支付信息','{:Url('user/info',['user_id'=>$item['user_id']])}')" href="javascript:;" title="修改支付信息"></a>
+                                        <a style="text-decoration:none" class="fa fa-edit" onClick="member_edit('修改','{:Url('article/edit',['article_id'=>$item['article_id']])}')" href="javascript:;" title="修改"></a>
+                                        <a style="text-decoration:none" class="fa fa-times"   onClick="picture_del(this,'{:Url('article/del',['article_id'=>$item['article_id']])}')" href="javascript:;" title="删除"></a>
                                     </td>
 
                                 </tr>
@@ -108,7 +108,12 @@
         });
     }
     function member_edit(title,url,w,h){
-        layer_show(title,url,w,h);
+        var index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
     }
     function layer_show(title,url,w,h){
         if (title == null || title == '') {

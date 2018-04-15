@@ -34,12 +34,12 @@
             <div class="x_content">
                 <br />
                 <form id="demo-form2" class="form-horizontal form-label-left" onsubmit="return false">
-
+                    <input type="hidden" name="article_id" value="<?php echo $data['article_id']?>">
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">文章标题 <span class="required">*</span>
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="text" id="first-name" required="required" class="form-control col-md-7 col-xs-12" name="title">
+                            <input type="text" id="first-name" required="required" class="form-control col-md-7 col-xs-12" name="title" value="<?php echo $data['title']?>">
                         </div>
                     </div>
                     <div class="form-group">
@@ -50,7 +50,12 @@
                                 <div id="vi-demo">
                                     <!--用来存放item-->
                                     <div id="viList" class="vi-list">
-
+                                        <div id="<?= uniqid('vi')?>" class="file-item thumbnail">
+                                            <div onclick="delParent(this)" style="cursor: pointer;background: url('/images/h-ui/del.png') no-repeat;background-size:contain;height: 20px;width: 20px;position: absolute;z-index: 10;right: 5px;"></div>
+                                            <img style="width: 100px;height: 100px;" src="<?php echo $data['img']?>">
+                                            <input name="vi" type="hidden" value="<?php echo $data['img']?>">
+                                            <div class="info"></div>
+                                        </div>
                                     </div>
                                     <div id="viPicker">选择封面</div>
                                 </div>
@@ -60,7 +65,7 @@
                     <div class="form-group">
                         <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">内容<span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <textarea id="container" name="content" type="text/plain" style="width:1024px;height:500px;"></textarea>
+                            <textarea id="container" name="content" type="text/plain" style="width:1024px;height:500px;"><?php echo $data['content']?></textarea>
                         </div>
                     </div>
                     <div class="ln_solid"></div>
@@ -80,7 +85,7 @@
     var vi_count=0;
 
     $('.btn-success').click(function () {
-        var url="{:url('article/add')}";
+        var url="{:url('article/edit')}";
         var from_data = $('#demo-form2').serializeArray();
         var data = [];
         $.each(from_data,function(i){
@@ -95,12 +100,11 @@
             success:function (re) {
                 console.log(re);
                 if(re.code==200){
-                    var index = parent.layer.getFrameIndex(window.name);
-                    parent.layer.msg('添加成功',{icon: 1,time:1000});
-                    parent.layer.close(index);
-                    parent.reload();
+                    layer.msg('修改成功', {icon: 1,time:1000});
+                    layer_close();
+                    window.location.reload();
                 }else{
-                    layer.msg('添加失败', {icon: 5,time:1000});
+                    layer.msg('修改失败', {icon: 5,time:1000});
                 }
             },
             error:function(){
