@@ -96,11 +96,11 @@
                 console.log(re);
                 if(re.code==200){
                     var index = parent.layer.getFrameIndex(window.name);
-                    parent.layer.msg('添加成功',{icon: 1,time:1000});
+                    parent.layer.msg(re.msg,{icon: 1,time:1000});
                     parent.layer.close(index);
                     parent.reload();
                 }else{
-                    layer.msg('添加失败', {icon: 5,time:1000});
+                    layer.msg(re.msg, {icon: 5,time:1000});
                 }
             },
             error:function(){

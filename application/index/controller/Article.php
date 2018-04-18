@@ -33,10 +33,11 @@ class Article extends Base{
             $post['user_id']=Session::get('user_id');
             $res=\db('article')->insert($post);
             if($res){
-                $this->success('添加成功！', Url('article/index'));exit;
+                json_return([],'添加成功');
+//                $this->success('添加成功！', Url('article/index'));exit;
             }else{
-                $this->error('添加失败！');
-                exit;
+                json_return([],'添加失败');
+//                $this->error('添加失败！');exit;
             }
         }
         return $this->fetch('add');
