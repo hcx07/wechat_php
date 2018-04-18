@@ -98,7 +98,6 @@
             data:data,
             dataType:'json',
             success:function (re) {
-                console.log(re);
                 if(re.code==200){
                     layer.msg('修改成功', {icon: 1,time:1000});
                     layer_close();

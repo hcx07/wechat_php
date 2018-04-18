@@ -93,7 +93,6 @@
             data:data,
             dataType:'json',
             success:function (re) {
-                console.log(re);
                 if(re.code==200){
                     var index = parent.layer.getFrameIndex(window.name);
                     parent.layer.msg(re.msg,{icon: 1,time:1000});
@@ -201,7 +200,6 @@
         // 文件上传成功，给item添加成功class, 用样式标记上传成功。
         vi_uploader.on( 'uploadSuccess', function( file,res ) {
             var url = res.data;
-            console.log(res);
             vi_count+=1;
             $( '#'+file.id).find("img").attr("src",url);
             $( '#'+file.id).find("input").val(url);
