@@ -18,7 +18,7 @@
 <link href="/build/css/custom.min.css" rel="stylesheet">
 
 <script type="text/javascript" charset="utf-8" src="/jquery/jquery.js"></script>
-<script type="text/javascript" charset="utf-8" src="/layer/layer.js"></script>
+<script type="text/javascript" charset="utf-8" src="/layer/src/layer.js"></script>
 
 <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.js"> </script>
