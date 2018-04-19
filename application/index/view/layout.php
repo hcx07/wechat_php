@@ -169,7 +169,7 @@
 <!-- Custom Theme Scripts -->
 <script src="/build/js/custom.min.js"></script>
 
-<script type="text/javascript" src="/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/layer/src/layer.js"></script>
 
 </body>
 </html>
