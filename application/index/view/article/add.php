@@ -94,10 +94,8 @@
             dataType:'json',
             success:function (re) {
                 if(re.code==200){
-                    var index = parent.layer.getFrameIndex(window.name);
-                    parent.layer.msg(re.msg,{icon: 1,time:1000});
-                    parent.layer.close(index);
-                    parent.reload();
+                    layer.msg(re.msg, {icon: 1,time:1000});
+                    parent.location.reload();
                 }else{
                     layer.msg(re.msg, {icon: 5,time:1000});
                 }
