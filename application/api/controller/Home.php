@@ -34,7 +34,9 @@ class Home extends Controller
             ->limit($limit)
             ->select();
         foreach ($res as &$item){
-//            $item['content']=mb_substr(strip_tags($item['content']),0,100).'...';
+            $content=mb_substr(strip_tags($item['content']),0,28).'...';
+//            $content=strip_tags($item['content']);
+            $item['content']=substr_replace($content,'\n',14,0);
         }
         json_return($res);
     }
