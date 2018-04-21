@@ -34,7 +34,7 @@ class Home extends Controller
             ->limit($limit)
             ->select();
         foreach ($res as &$item){
-            $content=mb_substr(strip_tags($item['content']),0,28).'...';
+            $content=mb_substr(strip_tags($item['content']),0,27).'...';
 //            $content=strip_tags($item['content']);
             $item['content']=[mb_substr($content,0,14),mb_substr($content,15)];
         }
