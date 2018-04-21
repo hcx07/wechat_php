@@ -36,7 +36,7 @@ class Home extends Controller
         foreach ($res as &$item){
             $content=mb_substr(strip_tags($item['content']),0,28).'...';
 //            $content=strip_tags($item['content']);
-            $item['content']=substr_replace($content,'\n',14,0);
+            $item['content']=[mb_substr($content,0,14),mb_substr($content,15)];
         }
         json_return($res);
     }
