@@ -25,8 +25,8 @@ class Home extends Controller
      * 获取文章
      */
     public function  get_article(){
-        $page=Request::instance()->post('page',1);
-        $limit=Request::instance()->post('limit',10);
+        $page=Request::instance()->param('page',1);
+        $limit=Request::instance()->param('limit',10);
         $res=db('article')
             ->where(['status'=>0])
             ->order('add_time desc')
@@ -42,7 +42,7 @@ class Home extends Controller
      * 获取文章详情
      */
     public function get_info(){
-        $article_id=Request::instance()->post('article_id',0);
+        $article_id=Request::instance()->param('article_id',0);
         if(!$article_id){
             json_return([],'未获取到文章',300);
         }
