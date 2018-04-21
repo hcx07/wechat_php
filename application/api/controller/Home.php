@@ -35,7 +35,7 @@ class Home extends Controller
             ->select();
         foreach ($res as &$item){
             $content=mb_substr(strip_tags($item['content']),0,28).'...';
-            $item['content']=[mb_substr($content,0,14),mb_substr($content,15)];
+            $item['content']=['one'=>mb_substr($content,0,14),'two'=>mb_substr($content,15)];
         }
         json_return($res);
     }
