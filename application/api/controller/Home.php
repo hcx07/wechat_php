@@ -7,7 +7,9 @@
  * Time: 10:54
  */
 namespace app\api\controller;
+use Symfony\Component\Finder\Tests\Iterator\RealIteratorTestCase;
 use think\Controller;
+use think\Request;
 
 class Home extends Controller
 {
@@ -23,10 +25,33 @@ class Home extends Controller
      * 获取文章
      */
     public function  get_article(){
-        $res=db('article')->where(['status'=>0])->order('add_time desc')->limit(5)->select();
+        $page=Request::instance()->post('page',1);
+        $limit=Request::instance()->post('limit',10);
+        $res=db('article')
+            ->where(['status'=>0])
+            ->order('add_time desc')
+            ->page($page)
+            ->limit($limit)
+            ->select();
         foreach ($res as &$item){
             $item['content']=mb_substr(strip_tags($item['content']),0,100) ;
         }
+        json_return($res);
+    }
+    /**
+     * 获取文章详情
+     */
+    public function get_info(){
+        $article_id=Request::instance()->post('article_id',0);
+        if(!$article_id){
+            json_return([],'未获取到文章',300);
+        }
+        $res=db('article')->where(['article_id'=>$article_id,'status'=>0])->find();
+        if(!$res){
+            json_return([],'文章不存在或已删除',300);
+        }
+        $time=date('Y-m-d H:i',$res['add_time']);
+        $res['other']=$time;
         json_return($res);
     }
 
