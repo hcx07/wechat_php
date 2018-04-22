@@ -32,7 +32,7 @@ class Article extends Base{
             $post['add_time']=time();
             $post['user_id']=Session::get('user_id');
             if(strlen($post['title'])>40){
-                json_return([],'标题最多允许40个字符');
+                json_return([],'标题最多允许26个字符');
             }
             $res=\db('article')->insert($post);
             if($res){
@@ -54,7 +54,7 @@ class Article extends Base{
         if(Request::instance()->isPost()){
             $post=Request::instance()->post();
             if(strlen($post['title'])>40){
-                json_return([],'标题最多允许40个字符');
+                json_return([],'标题最多允许26个字符');
             }
             $article_id=$post['article_id'];
             $data=[
