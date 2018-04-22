@@ -31,6 +31,9 @@ class Article extends Base{
             unset($post['vi']);
             $post['add_time']=time();
             $post['user_id']=Session::get('user_id');
+            if(strlen($post['title'])>40){
+                json_return([],'标题最多允许40个字符');
+            }
             $res=\db('article')->insert($post);
             if($res){
                 json_return([],'添加成功');
@@ -50,6 +53,9 @@ class Article extends Base{
         $data=db('article')->where(['article_id'=>$article_id,'status'=>0])->find();
         if(Request::instance()->isPost()){
             $post=Request::instance()->post();
+            if(strlen($post['title'])>40){
+                json_return([],'标题最多允许40个字符');
+            }
             $article_id=$post['article_id'];
             $data=[
                 'img'=>$post['vi'],
