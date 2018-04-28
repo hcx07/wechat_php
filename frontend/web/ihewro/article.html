@@ -1,0 +1,1116 @@
+﻿
+<!DOCTYPE HTML>
+<html class="no-js bg" lang="zh-cmn-Hant">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#3a3f51" />
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<title>java实现Apriori算法——频繁项集的计算 - 友人C</title>
+<link rel="icon" type="image/ico" href="/favicon.ico">
+<script type="text/javascript" src="js/aplayer.min_1.js"></script>
+<script>var meting_api="https://www.ihewro.com/action/metingapi?server=:server&type=:type&id=:id&r=:r";</script><meta name="description" content="前言之前学校开的选修课《数据挖掘》，布置的两道算法题，时间有限完成其中一道：用Apriori算法求特定支持度的频繁项集。算法本身不难，java萌新我却花费了一天的时间，特此记录。算法描述我们目的..." />
+<meta name="keywords" content="int,key,重复,代码,else,split,文件,class,内容,string,说明,行,函数,时候,学校,界面,true,链接,选修课,java,选项,元素,return,项集,频繁,剪枝,集合" />
+<meta name="generator" content="Typecho 1.0/14.10.10" />
+<meta name="template" content="handsome" />
+<link rel="pingback" href="https://www.ihewro.com/action/xmlrpc" />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.ihewro.com/action/xmlrpc?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.ihewro.com/action/xmlrpc?wlw" />
+<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="https://www.ihewro.com/feed/archives/735/" />
+<link rel="alternate" type="application/rdf+xml" title="RSS 1.0" href="https://www.ihewro.com/feed/rss/archives/735/" />
+<link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="https://www.ihewro.com/feed/atom/archives/735/" />
+<link href="css/bootstrap.min_1.css" rel="stylesheet">
+<link rel="stylesheet" href="css/function.min_1.css" type="text/css" />
+<link rel="stylesheet" href="css/handsome.min_1.css" type="text/css" />
+<link rel="stylesheet" href="css/jquery.fancybox.min_1.css" type="text/css" />
+<link rel="stylesheet" href="css/font_1.css" type="text/css" />
+<style type="text/css">html.bg{background-image:-moz-radial-gradient(-20% 140%,ellipse,rgba(143,192,193,.6) 30%,rgba(255,255,227,0) 50%),-moz-radial-gradient(60% 40%,ellipse,#d9e3e5 10%,rgba(44,70,76,.0) 60%),-moz-linear-gradient(-45deg,rgba(143,181,158,.8) -10%,rgba(213,232,211,.8) 80% );background-image:-o-radial-gradient(-20% 140%,ellipse,rgba(143,192,193,.6) 30%,rgba(255,255,227,0) 50%),-o-radial-gradient(60% 40%,ellipse,#d9e3e5 10%,rgba(44,70,76,.0) 60%),-o-linear-gradient(-45deg,rgba(143,181,158,.8) -10%,rgba(213,232,211,.8) 80% );background-image:-ms-radial-gradient(-20% 140%,ellipse,rgba(143,192,193,.6) 30%,rgba(255,255,227,0) 50%),-ms-radial-gradient(60% 40%,ellipse,#d9e3e5 10%,rgba(44,70,76,.0) 60%),-ms-linear-gradient(-45deg,rgba(143,181,158,.8) -10%,rgba(213,232,211,.8) 80% );background-image:-webkit-radial-gradient(-20% 140%,ellipse,rgba(143,192,193,.6) 30%,rgba(255,255,227,0) 50%),-webkit-radial-gradient(60% 40%,ellipse,#d9e3e5 10%,rgba(44,70,76,.0) 60%),-webkit-linear-gradient(-45deg,rgba(143,181,158,.8) -10%,rgba(213,232,211,.8) 80% );}</style>
+<script src="js/jquery.min_1.js"></script>
+<script data-no-instant type="text/javascript">var _hmt =_hmt ||[];(function() {var hm =document.createElement("script");hm.src ="https://hm.baidu.com/hm.js?3b1f6198215a81b2f56b1387c009c48f";var s =document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();</script>
+</head>
+<body id="body">
+<div id="alllayout" class="app app-aside-fixed container app-header-fixed "> 
+<header id="header" class="app-header navbar" role="menu">
+<div class="navbar-header bg-dark">
+<button class="pull-right visible-xs dk" ui-toggle-class="show" target=".navbar-collapse">
+<i class="fa fa-gear text-lg"></i>
+</button>
+<button class="pull-right visible-xs" ui-toggle-class="off-screen" target=".app-aside" ui-scroll="app">
+<i class="fa fa-menu text-lg"></i>
+</button>
+<a href="https://www.ihewro.com/" class="navbar-brand text-lt">
+<i class="iconfont icon-shouyeshouye"></i>
+<span class="hidden-folded m-l-xs">友人C</span>
+</a>
+</div>
+<div class="collapse pos-rlt navbar-collapse box-shadow bg-dark"> 
+<div class="nav navbar-nav hidden-xs">
+<a data-no-instant href="#" class="btn no-shadow navbar-btn" ui-toggle-class="app-aside-folded" target=".app">
+<i class="fa fa-dedent text icon-fw"></i>
+<i class="fa fa-indent icon-fw text-active"></i>
+</a>
+<a href="#" class="btn no-shadow navbar-btn" ui-toggle-class="show" target="#aside-user">
+<i class="iconfont icon-user icon-fw"></i>
+</a>
+</div>
+<form id="searchform" class="navbar-form navbar-form-sm navbar-left shift" method="post" role="search">
+<div class="form-group">
+<div class="input-group">
+<input data-instant id="keyword" type="search" name="s" class="form-control input-sm bg-light no-border rounded padder" required placeholder="輸入關鍵詞搜索…">
+<span class="input-group-btn">
+<button data-instant type="submit" class="btn btn-sm bg-light rounded"><i class="fa fa-search"></i></button>
+</span>
+</div>
+</div>
+</form>
+<a href="" style="display: none" id="searchUrl"></a>
+<ul class="nav navbar-nav navbar-right">
+<li class="music-box hidden-xs hidden-sm">
+<div id="skPlayer"></div>
+</li>
+<li class="dropdown "><a class="skPlayer-list-switch dropdown-toggle"><i class="fa fa-headphones"></i><span class="visible-xs-inline"></span></a></li>
+<li class="dropdown">
+<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+<i class="fa fa-bell icon-fw"></i>
+<span class="visible-xs-inline">
+閒言碎語 </span>
+<span class="badge badge-sm up bg-danger pull-right-xs"></span>
+</a>
+<div class="dropdown-menu w-xl animated fadeInUp">
+<div class="panel bg-white">
+<div class="panel-heading b-light bg-light">
+<strong>
+閒言碎語 </strong>
+</div>
+<div class="list-group" id="smallRecording">
+<a href="https://www.ihewro.com/index.php/cross.html" class="list-group-item"><span class="clear block m-b-none words_contents">我们一路奋战，不是为了改变这个世界 而是为了不让世界改变我们。这个世界的阴暗面比黑夜还黑，只是我们看不见，别以为在白天看着太阳，以为这个世界有多光明。 ​​​<br><small class="text-muted">2017-11-24 00:02:00</small></span></a><a href="https://www.ihewro.com/index.php/cross.html" class="list-group-item"><span class="clear block m-b-none words_contents">“都崭新，都暗淡，都独立，都有明天。”<br><small class="text-muted">2017-11-23 22:22:47</small></span></a><a href="https://www.ihewro.com/index.php/cross.html" class="list-group-item"><span class="clear block m-b-none words_contents">想来handsome已经一年。
+这一年的变化，真的太大了，我也经历了很多...很多感慨，然而还得先去写作业……<br><small class="text-muted">2017-11-17 21:39:32</small></span></a> </div>
+</div>
+</div>
+</li>
+<li class="dropdown" id="easyLogin">
+<a onclick="return false" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
+<span class="text">登錄</span>
+<b class="caret"></b>
+</a>
+<div class="dropdown-menu w-lg wrapper bg-white" aria-labelledby="navbar-login-dropdown">
+<form id="Login_form" action="https://www.ihewro.com/index.php/action/login?_=ded78283f22708cb440a79d59ed315ce" method="post">
+<div class="form-group">
+<label for="navbar-login-user">用戶名</label>
+<input type="text" name="name" id="navbar-login-user" class="form-control" placeholder="用戶名或電子郵箱"></div>
+<div class="form-group">
+<label for="navbar-login-password">密碼</label>
+<input type="password" name="password" id="navbar-login-password" class="form-control" placeholder="密碼"></div>
+<button type="submit" id="login-submit" name="submitLogin" class="btn btn-block btn-primary">
+<span class="text">登錄</span>
+<span class="text-active">登錄中...</span>
+<span class="banLogin_text">刷新页面后登录</span>
+<i class="animate-spin  fa fa-spinner hide" id="spin-login"></i>
+<i class="animate-spin fa fa-refresh hide" id="ban-login"></i>
+</button>
+<input type="hidden" name="referer" value="https://www.ihewro.com" data-current-url="value"></form>
+</div>
+</li>
+</ul>
+</div>
+</header>
+<aside id="aside" class="app-aside hidden-xs bg-light"> <div class="aside-wrap">
+<div class="navi-wrap">
+<div class="clearfix hidden-xs text-center hide show" id="aside-user">
+<div class="dropdown wrapper">
+<a href="https://www.ihewro.com/cross.html">
+<span class="thumb-lg w-auto-folded avatar m-t-sm">
+<img src="picture/1739964761_1.jpg" class="img-full">
+</span>
+</a>
+<a href="#" data-toggle="dropdown" class="dropdown-toggle hidden-folded">
+<span class="clear">
+<span class="block m-t-sm">
+<strong class="font-bold text-lt">ihewro</strong>
+<b class="caret"></b>
+</span>
+<span class="text-muted text-xs block">A student</span>
+</span>
+</a>
+<ul class="dropdown-menu animated fadeInRight w hidden-folded">
+<li class="wrapper b-b m-b-sm bg-info m-t-n-xs">
+<span class="arrow top hidden-folded arrow-info"></span>
+<div>
+<p>晚上好，注意早點休息</p>
+</div>
+<div class="progress progress-xs m-b-none dker">
+<div class="progress-bar bg-white" data-toggle="tooltip" data-original-title="79.17%" style="width: 79.17%"></div>
+</div>
+</li>
+<li>
+<a href="https://www.ihewro.com/feed/" data-toggle="tooltip" title="订阅文章 Feed 源">
+<i style="position: relative;width: 30px;margin: -11px -10px;margin-right: 0px;overflow: hidden;line-height: 30px;text-align: center;" class="fa fa-rss"></i><span>文章RSS</span>
+</a>
+</li>
+<li>
+<a href="https://www.ihewro.com/feed/comments/" data-toggle="tooltip" title="订阅评论 Feed 源"><i style="position: relative;width: 30px;margin: -11px -10px;margin-right: 0px;overflow: hidden;line-height: 30px;text-align: center;" class="fa fa-rss-square"></i><span>評論RSS</span></a>
+</li>
+<li class="divider"></li>
+<li>
+<a data-no-instant href="https://www.ihewro.com/admin/login.php">登錄</a>
+</li>
+</ul>
+</div>
+<div class="line dk hidden-folded"></div>
+</div>
+<nav ui-nav class="navi clearfix">
+<ul class="nav">
+<li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+<span>導航</span>
+</li>
+<li>
+<a href="https://www.ihewro.com/" class="auto">
+<i class="fa fa-home icon text-md"></i>
+<span>首頁</span>
+</a>
+</li>
+<li class="line dk"></li>
+<li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+<span>組成</span>
+</li>
+<li>
+<a data-no-instant class="auto">
+<span class="pull-right text-muted">
+<i class="fa icon-fw fa-angle-right text"></i>
+<i class="fa icon-fw fa-angle-down text-active"></i>
+</span>
+<i class="iconfont icon-c-classification"></i>
+<span>分類</span>
+</a>
+<ul class="nav nav-sub dk">
+<li class="nav-sub-header">
+<a data-no-instant>
+<span>分類</span>
+</a>
+</li>
+<li><a href="https://www.ihewro.com/category/tech/"><span>设计开发</span></a></li><li><a href="https://www.ihewro.com/category/share/"><span>资源技巧</span></a></li><li><a href="https://www.ihewro.com/category/hobby/"><span>兴趣爱好</span></a></li><li><a href="https://www.ihewro.com/category/life/"><span>生活随笔</span></a></li><li><a href="https://www.ihewro.com/category/others/"><span>文章杂烩</span></a></li> </ul>
+</li>
+<li>
+<a data-no-instant class="auto">
+<span class="pull-right text-muted">
+<i class="fa icon-fw fa-angle-right text"></i>
+<i class="fa icon-fw fa-angle-down text-active"></i>
+</span>
+<i class="iconfont icon-176pages"></i>
+<span>頁面</span>
+</a>
+<ul class="nav nav-sub dk">
+<li class="nav-sub-header">
+<a data-no-instant>
+<span>頁面</span>
+</a>
+</li>
+<li><a href="https://www.ihewro.com/links.html"><span>链接库</span></a></li>
+<li><a href="https://www.ihewro.com/archives.html"><span>归档栏</span></a></li>
+<li><a href="https://www.ihewro.com/msg.html"><span>留言板</span></a></li>
+<li><a href="https://www.ihewro.com/about.html"><span>关于我</span></a></li>
+<li><a href="https://www.ihewro.com/cross.html"><span>时光机</span></a></li>
+<li><a href="https://www.ihewro.com/loves.html"><span>万花筒</span></a></li>
+<li><a href="https://www.ihewro.com/project.html"><span>实验室</span></a></li>
+<li><a href="https://www.ihewro.com/donate.html"><span>赞助我</span></a></li>
+</ul>
+</li>
+<li>
+<a data-no-instant class="auto">
+<span class="pull-right text-muted">
+<i class="fa icon-fw fa-angle-right text"></i>
+<i class="fa icon-fw fa-angle-down text-active"></i>
+</span>
+<i class="iconfont icon-pengyouquan"></i>
+<span>友鏈</span>
+</a>
+<ul class="nav nav-sub dk">
+<li class="nav-sub-header">
+<a data-no-instant>
+<span>友鏈</span>
+</a>
+</li>
+<li><a href="http://yufanboke.top/" target="_blank" title="一个爱折腾的高二学生博客"><span>yufan 's blog</span></a></li><li><a href="https://1314.li/" target="_blank" title="吹灯拔蜡剑!"><span>晓日·落霞 </span></a></li><li><a href="http://www.longxianwen.net/" target="_blank" title="互联网最难的不是知识，是学不完的知识"><span>资料收藏夹</span></a></li><li><a href="https://www.liaronce.win" target="_blank" title="高一学生的搞事日常 "><span>LiarOnce</span></a></li><li><a href="https://www.mocurio.com/" target="_blank" title="安静的做一个沉默中的分享、记录小站"><span>初夏阳光</span></a></li><li><a href="https://biji.io" target="_blank" title="热爱前端，喜欢编程，也会一些设计，知识杂而不精，善于折腾并乐此不疲。"><span>设计笔记</span></a></li><li><a href="http://demo.ycool.top" target="_blank" title="三世如流水，一梦难追回"><span>梦逸笔谈</span></a></li><li><a href="https://smallk.net" target="_blank" title="给你想知道的科技信息、数码前沿、PC经验、休闲趣事、浏览器交流等，这就是科技临时站的意义~"><span>科技临时站</span></a></li><li><a href="https://wiki.ihewro.com/" target="_blank" title="友人C的笔记本"><span>友人C的wiki</span></a></li><li><a href="https://www.acgbuster.com/" target="_blank" title="以梦为马，不负韶华"><span>面码的buster</span></a></li> </ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</aside>
+<div id="content" class="app-content markdown-body">
+<div id="loadingbar" class="butterbar hide">
+<span class="bar"></span>
+</div>
+<a class="off-screen-toggle hide"></a>
+<main class="app-content-body">
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+<div class="col">
+<header id="small_widgets" class="bg-light lter b-b wrapper-md">
+<h1 class="entry-title m-n font-thin h3 text-black l-h">java实现Apriori算法——频繁项集的计算</h1> 
+<ul class="entry-meta text-muted list-inline m-b-none small">
+<li class="meta-author"><i class="fa fa-user" aria-hidden="true"></i><span class="sr-only">作者：</span> <a class="meta-value" href="https://www.ihewro.com/author/1/" rel="author"> 友人C</a></li>
+<li class="meta-date"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;<span class="sr-only">发布时间：</span><time class="meta-value">2017-11-20</time></li>
+<li class="meta-views"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;<span class="meta-value">48&nbsp;次瀏覽</span></li>
+<li class="meta-comments"><i class="iconfont icon-comments" aria-hidden="true"></i>&nbsp;<a class="meta-value" href="#comments">&nbsp;暫無評論</a></li>
+<li class="meta-categories"><i class="fa fa-tags" aria-hidden="true"></i> <span class="sr-only">分類：</span> <span class="meta-value"><a href="https://www.ihewro.com/category/tech/">设计开发</a></span></li>
+</ul>
+</header>
+<div class="wrapper-md">
+<ol class="breadcrumb bg-white b-a" itemscope=""><li>
+<a href="https://www.ihewro.com/" itemprop="breadcrumb" title="返回首頁" data-toggle="tooltip"><i class="fa fa-home" aria-hidden="true"></i>&nbsp;首頁</a>
+</li><li class="active">正文&nbsp;&nbsp;</li>
+<div style="float:right;">
+分享到：
+<style>i.iconfont.icon-qzone:after{padding:0 0px 0 5px;color:#ccc;content:"/\00a0";}</style>
+<a href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://www.ihewro.com/archives/735/&title=java实现Apriori算法——频繁项集的计算&site=https://www.ihewro.com/" itemprop="breadcrumb" target="_blank" title="" data-toggle="tooltip" data-original-title="分享到QQ空间" onclick="window.open(this.href, 'qzone-share', 'width=550,height=335');return false;"><i style="font-size:15px;" class="iconfont icon-qzone" aria-hidden="true"></i></a>
+<a href="http://service.weibo.com/share/share.php?url=https://www.ihewro.com/archives/735/&title=java实现Apriori算法——频繁项集的计算" target="_blank" itemprop="breadcrumb" title="" data-toggle="tooltip" data-original-title="分享到微博" onclick="window.open(this.href, 'weibo-share', 'width=550,height=335');return false;"><i style="font-size:15px;" class="fa fa-weibo" aria-hidden="true"></i></a>
+</div></ol> 
+<div id="postpage" class="blog-post">
+<article class="panel">
+<div class="entry-thumbnail" aria-hidden="true"><div class="item-thumb" style="background-image: url(images/1792175265_1.jpg)"></div></div> 
+<div id="post-content" class="wrapper-lg">
+<div class="entry-content l-h-2x">
+<h2>前言</h2>
+<p>之前学校开的选修课《数据挖掘》，布置的两道算法题，时间有限完成其中一道：用Apriori算法求特定支持度的频繁项集。</p>
+<p>算法本身不难，java萌新我却花费了一天的时间，特此记录。</p>
+<h2>算法描述</h2>
+<p><img src="picture/006tnc79ly1flowy3fhmaj309v08xjsh.jpg" alt="" /></p>
+<p><img src="picture/006tnc79ly1flox02y3m7j30sp0hln35.jpg" alt="" /></p>
+<p>我们目的是求出项数为K的频繁项集即L(K)。</p>
+<p>Apriori算法的核心步骤是：</p>
+<ol>
+<li>L(K-1)通过<strong>自连接</strong>求出项数为K的候选项集合C(K)</li>
+<li>通过对C(K)进行一系列处理（<strong>剪枝 + 支持度判断</strong>） 得到L(K)集合</li>
+</ol>
+<p>在说明下面更多内容之前，先对<strong>一部分概念进行说明</strong>：</p>
+<ul>
+<li>事务：如第一张图中，每一行就是一个事务，如 <code>T100 I1,I2,I5</code>。其中<code>T100</code>是事务编号，这个随便命名，只要保证唯一即可。后面的<code>I1 I2 I5</code>是该事务中的<strong>项</strong></li>
+<li>数据集：如图一，整个表就是数据集，就是<strong>所有的事务的集合</strong>。即D = {T100,T200…}</li>
+<li>项集：包含若干个项（如I1 、I2这样的项）的集合。可以看出项集和事务似乎有点项。但是项集更随意一点，任意几个项都能组成一个项集。但是事务是人为规定好的。</li>
+<li>可信度：<strong>项集在数据集中出现的重复次数</strong>。项集不一定需要在事务中连续出现。如{I1,I2,I5}项集在数据集中出现的次数为2次，分别是第一个和倒数第二个事务。</li>
+</ul>
+<p>接下来，详细分析算法中的两个步骤：</p>
+<p><strong>1. 自连接：</strong></p>
+<p>怎么个连接法呢？以图二中的L2频繁集的集合为例：</p>
+<table>
+<thead>
+<tr>
+<th>项集</th>
+<th>支持度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>{I1,I2}</td>
+<td>4</td>
+</tr>
+<tr>
+<td>{I1,I3}</td>
+<td>4</td>
+</tr>
+<tr>
+<td>{I1,I5}</td>
+<td>2</td>
+</tr>
+<tr>
+<td>{I2,I3}</td>
+<td>4</td>
+</tr>
+<tr>
+<td>{I2,I4}</td>
+<td>2</td>
+</tr>
+<tr>
+<td>{I2,I5}</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>判断两个项集是否可以自连接要看两个项集的K-1项是否完全相同。</strong>如果满足条件，<strong>连接后的项集 = 第一个项集 + 第二个项集的最后一个元素</strong>。</p>
+<p>比如{I1 I2}与{I1 I3}满足自连接条件，连接后的项集为{I1 I2 I3}。</p>
+<p><strong>2. 剪枝：</strong></p>
+<p>剪枝是这个算法的核心，如果不进行这个步骤的话，也能得出正确结果，但是时间就会大大增加了。</p>
+<p>剪枝的核心是<strong>若某个集合存在一个非空子集不是频繁项集，则该集合不是频繁项集。</strong></p>
+<p>我们通过自连接组成新的<strong>K项的候选项集</strong>后，需要通过剪枝判断是否满足条件。</p>
+<p>即<strong>找出该候选项集的含有(K-1)项的子集，并分别判断每个子集是否存在于K-1项频繁项集里。只要有一个不存在，那么该K项候选项集也不可能是频繁项集。</strong></p>
+<p>这里我们只需要找含有K-1项的子集，而不用找所有的子集，因为这个算法是从下不断递归上来的，含有更少项的子集肯定是在频繁子集里的。</p>
+<p>问题关键是怎么寻找某个K项集的K-1项子集呢？</p>
+<p>很简单，依次把K项集中的每个元素去掉一个就可以了。</p>
+<hr />
+<p>完成了这两步骤，就完成了这个算法了核心步骤。</p>
+<p><strong>3. 对精简后候选集统计每一个项集的支持度</strong></p>
+<p><strong>4. 根据最小支持度将候选项集转换为K项频繁项集合</strong></p>
+<p>可以看出，如果不剪枝的话，第三步的工作量是非常大的。剪枝过后，候选集的体积大大减小了。</p>
+<p>但是获取含有一项的频繁项集因为没有候选项集，就<strong>需要特殊处理</strong>。</p>
+<p>这个很简单，就是统计数据集中的每一项的支持度，并和最小支持度进行比较，得到含有一项的频繁项集。</p>
+<h2>代码分析</h2>
+<p>github项目地址：<a href="https://github.com/ihewro/Apriori" target="_blank">https://github.com/ihewro/Apriori</a></p>
+<pre><code class="language-java">import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.*;
+
+/**
+ * @author 何炜
+ * 算法名称：数据挖掘：Apriori算法求特性支持度下的所有的频繁集
+ * 算法原理：
+ *
+ * 0. 获取C1的时候，因为没有L(0)频繁集，所以单独处理一个函数
+ * 1. 已经频繁集L(k-1)，{}自连接+剪枝}求出精简后的候选集C(k)
+ * 2. 根据精简后的候选集C(k)根据求出频繁集L(k)
+ *
+ * 数据结构：
+ * 1. 使用List&lt;String&gt; 存储整个数据库的数据，string代表每一行的数据
+ * 2. 使用HashMap&lt;String,Integer&gt; 存储项集以及项集的重复次数，便于查找。是{项集}的集合。
+ * 3. 每个项集用String类型存储。项集中的每一项使用String.split(" ")方法变成数据，以便取用项集中的每一项
+ *
+ * 给定的数据格式：
+ * 1. 每个数据以空格隔开
+ * 2. 每一行代表一个事务T,事务编号就是行号
+ *
+ * 示例数据：
+ * 1. {11，12，13}是一个频繁项集，是属于HashMap&lt;String,Integer&gt;中的一个元素，数据类型为String.
+ * 2. Set&lt;String&gt; = HashMap.keySet(); 用来存储HashMap的所有key的值，也就是存储所有的项集（不包括项集的重复次数）
+ *
+ * 相关概念：
+ * 1. 支持度百分比
+ * 2. 支持度
+ * 3. 事务
+ * 4. 候选项集
+ * 5. 频繁项集
+
+ */
+
+public class Main {
+
+    private static double SUPPORT_PERCENT = 0.01;
+    private static List&lt;String&gt; data2DList = new ArrayList&lt;&gt;();
+
+    public static void main(String[] args) {
+        System.out.println("===================Apriori算法主程序界面====================");
+
+        //0. 输入数据
+        /*Scanner in=new Scanner(System.in);
+        SUPPORT_PERCENT = in.nextDouble();*/
+
+        //1. 导入数据
+        importData();
+
+        //2. 进行算法处理
+        apriori();
+    }
+
+    /**
+     * Apriori算法主程序，需要递归处理
+     *
+     * @return
+     */
+    public static void apriori(){
+
+        //扫描整个数据库D，对每一项进行计数，获得一项的{候选项集合}
+        Map&lt;String, Integer&gt; stepFrequentSetMap = new HashMap&lt;&gt;();
+        System.out.println("\n=====================第" + 1 + "次扫描的频繁项集列表======================" + "\n");
+
+        stepFrequentSetMap.putAll(getFrequentSets(findCandidateOneSets()));
+        Set&lt;String&gt; stringSet = stepFrequentSetMap.keySet();
+
+        for (String string: stringSet){
+            System.out.println("频繁集：" + string +  "支持度:" + stepFrequentSetMap.get(string));
+        }
+        System.out.println("\n频繁项集的个数：" + stringSet.size());
+
+        int i = 1;
+        //当生成的频繁项集为空的时候，退出循环
+        while(stepFrequentSetMap != null &amp;&amp; stepFrequentSetMap.size()&gt;0){
+
+            i++;
+
+            //打印当前的频繁项集的信息
+            System.out.println("\n=====================第" + i + "次扫描的频繁项集列表======================" + "\n");
+
+            stepFrequentSetMap = getFrequentSets(getMinCandidate(stepFrequentSetMap));
+
+            if (stepFrequentSetMap != null){
+                stringSet = stepFrequentSetMap.keySet();
+                for (String string: stringSet){
+                    System.out.println("频繁集：" + string +  "支持度:" + stepFrequentSetMap.get(string));
+                }
+                System.out.println("\n频繁项集的个数：" + stringSet.size());
+            }
+
+        }
+    }
+
+    /**
+     * 导入数据
+     *
+     * @return 集合和集合，即二维集合
+     */
+    private static void importData(){
+
+        File file = new File("retail.dat");
+
+        try {
+            //文件存在且为文件类型执行接下来的操作
+            if (file.isFile() &amp;&amp; file.exists()){
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(file),
+                        "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(reader);
+                String lineTxt;
+                while ((lineTxt = bufferedReader.readLine()) != null){//读取文件中的一行
+
+                    data2DList.add(lineTxt);
+                }
+                reader.close();
+            }else {
+                System.err.println("找不到指定文件！");
+            }
+        }catch (Exception e){
+            System.err.println("读取文件内容出错！");
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 寻找1项的候选集C1（起始化特殊的处理）
+     *
+     * @return 返回map集合，这个集合是每一项以及对应的重复次数：key-&gt;value
+     *
+     * key：每一个候选项/频繁项
+     * value：相应候选项/频繁项的重复次数
+     */
+    private static HashMap&lt;String, Integer&gt; findCandidateOneSets()
+    {
+        HashMap&lt;String, Integer&gt; resultSetMap = new HashMap&lt;&gt;();
+
+        for(String dataList :data2DList)
+        {
+            String[] dataString = dataList.split(" ");
+            //查询map集合中是否有该元素，如果没有，加入该元素，否则给该元素对于的value(重复次数）+1
+            for (String string :dataString){
+                string += " ";
+                if (resultSetMap.get(string) == null){
+                    resultSetMap.put(string,1);
+                }else {
+                    resultSetMap.put(string,resultSetMap.get(string) + 1);
+                }
+            }
+        }
+        return resultSetMap;
+    }
+
+    /**
+     * 从L(k-1)频繁集合中得到精简的C(k)候选集
+     *
+     * 1. {连接 + 剪枝}  = {精简后的候选集C(k)}
+     * 是对L(k-1)频繁集的每一个集合，进行[边连接成候选集，边剪枝]而不是先全部生成了{候选集}，然后再进行一次大循环，进行剪枝，这样会增加时间复杂度
+     *
+     * 先验原则：若某个集合存在一个非空子集不是频繁项集，则该集合不是频繁项集
+     *
+     * 1. 根据先验原则压缩候选集大小后得到精简的候选集集合
+     * 2. 对精简过的候选项集进行累加计数
+     *
+     * @param frequentMapSet
+     * @return 返回C(k)候选集合
+     */
+    private static Map&lt;String, Integer&gt; getMinCandidate(Map&lt;String, Integer&gt; frequentMapSet){
+
+        //需要返回的精简过后的候选项集
+        Map&lt;String,Integer&gt; minCandidateMapSet = new HashMap&lt;&gt;();
+
+        //导入频繁项集的KEY
+        Set&lt;String&gt; frequentSet = frequentMapSet.keySet();
+
+        /**
+         * 1. {自连接过程:产生候选项集}
+         *
+         * 对于每一个项集，拆开成项的数组。将该项集的每一项与其他项集的每一项比较，
+         * 如果有不重复的项，就将该项与原项集链接起来，组成K项的候选项项集。
+         */
+
+        for (String frequentItemList1: frequentSet){
+            for (String frequentItemList2: frequentSet){
+                String[] itemArray1 =  frequentItemList1.split(" ");
+                String[] itemArray2 = frequentItemList2.split(" ");
+
+                //自连接生成的候选项集
+                String linkString = "";
+                boolean flag = true;//是否可以连接
+                /**
+                 * 判断是否可以自连接的条件：
+                 * 1. 前K-1项必须相同
+                 * 2. itemArray1的最后一项必须小于第二个项集的最后一项
+                 * 自连接过程：
+                 * 将第一个项集与第二个项集的最后一项连接起来
+                 */
+
+                for (int i =0;i&lt;itemArray1.length -1 ;i++){
+                    if (itemArray1[i].equals(itemArray2[i])){
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag &amp;&amp; itemArray1[itemArray1.length - 1].compareTo(itemArray2[itemArray1.length -1]) &lt; 0){
+                    linkString = frequentItemList1  + itemArray2[itemArray2.length - 1] + " ";
+                }
+
+                /**
+                 * 2. {剪枝过程，也就是先验规则的使用}
+                 *
+                 * 找出该候选集的所有子集，并判断每个子集是否属于频繁子集
+                 */
+                boolean hasInfrequentSubSet = false;// 是否有非频繁子项集，默认无
+                if (linkString != ""){//自连接成功
+                    //System.out.println(linkString);
+                    //候选项集的所有项的数组
+                    String[] itemArray = linkString.split(" ");
+                    //*重点：找出该候选集的所有子集，实际操作的时候只需要找出比候选集少一项的子集集合
+                    //*重点：因为这都是不断的递归上来的，项数更小的项集肯定是频繁项集
+                    for (int i = 0; i &lt;itemArray.length; i++){
+                        String subString = "";
+                        for (int j = 0;j&lt;itemArray.length; j++){
+                            if (j!=i){
+                                subString += itemArray[j] + " ";
+                            }
+                        }
+                        if (frequentMapSet.get(subString) == null){
+                            hasInfrequentSubSet = true;
+                            break;
+                        }
+                    }
+                }else{
+                    hasInfrequentSubSet = true;//这里并不是代表存在非频繁子集，只是表示没有自连接成功，没有找到候选集
+                }
+                //自连接成功，加入到候选集集合中
+                if (!hasInfrequentSubSet){
+                    minCandidateMapSet.put(linkString,0);
+                }
+            }
+        }
+
+        /**
+         * 3. {对生成的候选集进行统计支持度}
+         */
+
+        Set&lt;String&gt; minCandidateSet = minCandidateMapSet.keySet();
+
+        // 将每一行的候选项集，由String数据变成字符串数组。
+        // 将每一行的事务，由String转换成List&lt;String&gt;
+        for (String itemList: minCandidateSet){
+            String[] strings = itemList.split(" ");
+            int num = 0;
+
+            for (String data:data2DList){
+                List&lt;String&gt;dataList = Arrays.asList(data.split(" "));
+
+                Boolean flag = true;
+                //如果候选项集中有一项在当前事务中找不到，支持度则不会增加
+                for (int i =0;i &lt; strings.length;i++){
+
+                    if (!dataList.contains(strings[i])){
+
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag){
+                    minCandidateMapSet.put(itemList,minCandidateMapSet.get(itemList) + 1);
+                }
+            }
+
+        }
+
+        return minCandidateMapSet;
+    }
+
+    /**
+     * 从精简后的C(k)候选集中得到L(k)频繁集合
+     *
+     * {统计精简后的候选集C(k)的重复次数}  = {最后得到L(k)频繁集}
+     *
+     * 1. 对精简过的候选集进行判断（之前已经做好了计数工作），不满足支持度的进行排除
+     *
+     * @param minCandidateMapSet
+     * @return
+     */
+    private static Map&lt;String, Integer&gt; getFrequentSets(Map&lt;String, Integer&gt; minCandidateMapSet){
+
+        if (minCandidateMapSet == null){
+            //精简后的候选集为空，表示当前项数的候选集不存在，此时需要结束该算法了
+            System.err.println("候选项集为空");
+            return null;
+        }else{
+            Map&lt;String,Integer&gt; frequentMapSet = new HashMap&lt;&gt;();//需要返回的频繁项集
+
+            Set&lt;String&gt; minCandidateSet = minCandidateMapSet.keySet();//获取候选项集的KEY，也就是所有的项集的具体数据
+
+            Double SUPPORT = (data2DList.size() * SUPPORT_PERCENT);//最小支持度
+            //Double SUPPORT = 5.0;
+            System.out.println("最小支持度为：" + SUPPORT + " 候选项集的大小为：" + minCandidateMapSet.size() + "\n");
+            for (String itemListString: minCandidateSet){
+                //如果该项集的重复次数大于或者等于最小支持度，就把该项加入到频繁项即中
+                if (minCandidateMapSet.get(itemListString) &gt;= SUPPORT){
+                    frequentMapSet.put(itemListString,minCandidateMapSet.get(itemListString));
+                }
+            }
+            if (frequentMapSet.size() == 0){
+                //计算得到的频繁项集为空，表示此时循环应该结束了
+                return null;
+            }else{
+                return frequentMapSet;
+            }
+        }
+    }
+
+}</code></pre> </div>
+<div class="show-foot">
+<div class="notebook">
+<i class="fa fa-clock-o"></i>
+<span>最后修改：2017 年 11 月 20 日 11 : 04 PM</span>
+</div>
+<div class="copyright" data-toggle="tooltip" data-html="true" data-original-title="轉載請聯繫作者獲得授權，並注明轉載地址"><span>© 著作權歸作者所有</span>
+</div>
+</div>
+<div class="support-author">
+<button data-toggle="modal" data-target="#myModal" class="btn btn-pay btn-danger"><i class="fa fa-gratipay" aria-hidden="true"></i>&nbsp;讚賞支持</button>
+<div class="mt20 text-center article__reward-info">
+<span class="mr10">如果覺得我的文章對你有用，請隨意讚賞</span>
+</div>
+</div>
+<div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal-dialog modal-sm" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+<h4 class="modal-title">讚賞作者</h4>
+</div>
+<div class="modal-body">
+<p class="text-center"> <strong class="article__reward-text">掃一掃支付</strong> </p>
+<div class="tab-content">
+<img noGallery aria-labelledby="alipay-tab" class="pay-img tab-pane fade in active" id="alipay_author" role="tabpanel" src="picture/7461453895224b6e9767c36f3ecdf416.gif" />
+<img noGallery aria-labelledby="wechatpay-tab" class="pay-img tab-pane fade" id="wechatpay_author" role="tabpanel" src="picture/fe160b1488b64834afdcf2ec0f330206.gif" />
+</div>
+<div class="article__reward-border mb20 mt10"></div>
+<div class="text-center" role="tablist">
+<div class="pay-button" role="presentation" class="active"><button href="#alipay_author" id="alipay-tab" aria-controls="alipay_author" role="tab" data-toggle="tab" class="btn m-b-xs btn-info"><i class="iconfont icon-alipay" aria-hidden="true"></i><span>&nbsp;支付宝支付</span></button>
+</div>
+<div class="pay-button" role="presentation"><button href="#wechatpay_author" id="wechatpay-tab" aria-controls="wechatpay_author" role="tab" data-toggle="tab" class="btn m-b-xs btn-success"><i class="iconfont icon-wechatpay" aria-hidden="true"></i><span>&nbsp;微信支付</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</div>
+<nav class="m-t-lg m-b-lg">
+<ul class="pager">
+<li class="next"> <a href="https://www.ihewro.com/archives/734/" title="十月的北京" data-toggle="tooltip"> 下一篇 </a></li> <li class="previous"> <a href="https://www.ihewro.com/archives/737/" title="时间走得太快，我们还没有来得及看清快乐" data-toggle="tooltip"> 上一篇 </a></li>
+</ul>
+</nav>
+<div id="comments">
+<div id="respond-post-735" class="respond comment-respond">
+<h4 id="reply-title" class="comment-reply-title m-t-lg m-b">發表評論 <small data-no-instant class="cancel-comment-reply">
+<a id="cancel-comment-reply-link" href="https://www.ihewro.com/archives/735/#respond-post-735" rel="nofollow" style="display:none" onclick="return TypechoComment.cancelReply();">取消回复</a> </small>
+</h4>
+<form id="comment_form" method="post" action="https://www.ihewro.com/archives/735/comment" class="comment-form" role="form">
+<div class="comment-form-comment form-group">
+<label for="comment">評論 <span class="required text-danger">*</span></label>
+<textarea id="comment" class="textarea form-control OwO-textarea" name="text" rows="5" placeholder="说点什么吧……" onkeydown="if(event.ctrlKey&&event.keyCode==13){document.getElementById('submit').click();return false};"></textarea>
+<div class="OwO"></div>
+</div>
+<div id="author_info" class="row row-sm">
+<div class="comment-form-author form-group col-sm-6 col-md-4">
+<label for="author">名稱 <span class="required text-danger">*</span></label>
+<input id="author" class="form-control" name="author" type="text" value="" maxlength="245" placeholder="姓名或暱稱">
+</div>
+<div class="comment-form-email form-group col-sm-6 col-md-4">
+<label for="email">郵箱 <span class="required text-danger">*</span>
+</label>
+<input type="text" name="mail" id="mail" class="form-control" placeholder="郵箱 (必填,將保密)" value="" />
+<input type="hidden" name="receiveMail" id="receiveMail" value="yes" />
+</div>
+<div class="comment-form-url form-group col-sm-12 col-md-4">
+<label for="url">地址</label>
+<input id="url" class="form-control" name="url" type="url" value="" maxlength="200" placeholder="網站或博客"></div>
+</div>
+<div class="form-group">
+<button type="submit" name="submit" id="submit" class="submit btn btn-success padder-lg">
+<span class="text">發表評論</span>
+<span class="text-active">提交中...</span>
+</button>
+<i class="animate-spin fa fa-spinner hide" id="spin"></i>
+<input type="hidden" name="comment_post_ID" value="448" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</div>
+</form>
+</div>
+</div>
+<script type="text/javascript">(function () {window.TypechoComment ={dom :function (id) {return document.getElementById(id);},create :function (tag,attr) {var el =document.createElement(tag);for (var key in attr) {el.setAttribute(key,attr[key]);}
+return el;},reply :function (cid,coid) {var comment =this.dom(cid),parent =comment.parentNode,response =this.dom('respond-post-735'),input =this.dom('comment-parent'),form ='form' ==response.tagName ?response :response.getElementsByTagName('form')[0],textarea =response.getElementsByTagName('textarea')[0];if (null ==input) {input =this.create('input',{'type' :'hidden','name' :'parent','id' :'comment-parent'
+});form.appendChild(input);}
+input.setAttribute('value',coid);if (null ==this.dom('comment-form-place-holder')) {var holder =this.create('div',{'id' :'comment-form-place-holder'
+});response.parentNode.insertBefore(holder,response);}
+comment.appendChild(response);this.dom('cancel-comment-reply-link').style.display ='';if (null !=textarea &&'text' ==textarea.name) {textarea.focus();}
+return false;},cancelReply :function () {var response =this.dom('respond-post-735'),holder =this.dom('comment-form-place-holder'),input =this.dom('comment-parent');if (null !=input) {input.parentNode.removeChild(input);}
+if (null ==holder) {return true;}
+this.dom('cancel-comment-reply-link').style.display ='none';holder.parentNode.insertBefore(response,holder);return false;}
+};})();</script>
+<script type="text/javascript">var registCommentEvent =function() {var event =document.addEventListener ?{add:'addEventListener',focus:'focus',load:'DOMContentLoaded'
+} :{add:'attachEvent',focus:'onfocus',load:'onload'
+};var r =document.getElementById('respond-post-735');if (null !=r) {var forms =r.getElementsByTagName('form');if (forms.length >0) {var f =forms[0],textarea =f.getElementsByTagName('textarea')[0],added =false;if (null !=textarea &&'text' ==textarea.name) {textarea[event.add](event.focus,function () {if (!added) {var input =document.createElement('input');input.type ='hidden';input.name ='_';input.value =(function () {var _jWRe ='d'+'e'
++'d7'
++'82'
++'83f'
++
+'22'+
+'70'+
+'8cb'+'440'
++'a'
++'79d'
++''+
+'59'+
+'ed'+
+'V8'+
+'315'+
+'ce',_Q5AnJ =[[27,29]];for (var i =0;i < _Q5AnJ.length;i ++) {_jWRe =_jWRe.substring(0,_Q5AnJ[i][0]) + _jWRe.substring(_Q5AnJ[i][1]);}
+return _jWRe;})();f.appendChild(input);input =document.createElement('input');input.type ='hidden';input.name ='checkReferer';input.value ='false';f.appendChild(input);added =true;}
+});}
+}
+}
+};</script> </div>
+</div>
+<aside class="col w-md bg-white-only b-l bg-auto no-border-xs" role="complementary">
+<div id="sidebar">
+<section id="tabs-4" class="widget widget_tabs clear">
+<div class="nav-tabs-alt no-js-hide">
+<ul class="nav nav-tabs nav-justified" role="tablist">
+<li class="active" role="presentation"> <a href="#widget-tabs-4-hots" role="tab" aria-controls="widget-tabs-4-hots" aria-expanded="true" data-toggle="tab"> <i class="glyphicon glyphicon-fire text-md text-muted wrapper-sm" aria-hidden="true"></i> <span class="sr-only">熱門文章</span> </a></li>
+<li role="presentation"> <a href="#widget-tabs-4-comments" role="tab" aria-controls="widget-tabs-4-comments" aria-expanded="false" data-toggle="tab"> <i class="glyphicon glyphicon-comment text-md text-muted wrapper-sm" aria-hidden="true"></i> <span class="sr-only">最新評論</span> </a></li>
+<li role="presentation"> <a href="#widget-tabs-4-random" role="tab" aria-controls="widget-tabs-4-random" aria-expanded="false" data-toggle="tab"> <i class="glyphicon glyphicon-transfer text-md text-muted wrapper-sm" aria-hidden="true"></i> <span class="sr-only">隨機文章</span> </a></li>
+</ul>
+</div>
+<div class="tab-content">
+<div id="widget-tabs-4-hots" class="tab-pane wrapper-md active" role="tabpanel">
+<h3 class="widget-title m-t-none text-md">熱門文章</h3>
+<ul class="list-group no-bg no-borders pull-in m-b-none">
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/489/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/4.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/489/" title="handsome —— 一如少年般模样"> handsome —— 一如少年般模样 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">840</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">285166</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/378/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/14_1.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/378/" title="Leaf — A Typecho Theme"> Leaf — A Typecho Theme </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">91</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">15875</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/634/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/4.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/634/" title="deepin 15.4 beta 简单体验反馈"> deepin 15.4 beta 简单体验反馈 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">86</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">22011</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/524/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/5_1.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/524/" title=" 再见，2016"> 再见，2016 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">81</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">12069</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/598/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/14_1.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/598/" title="利用upyun又拍云CDN服务配置全站HTTPS"> 利用upyun又拍云CDN服务配置全站HTTPS </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">55</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">9432</span>
+</span>
+</small>
+</div>
+</li> </ul>
+</div>
+<div id="widget-tabs-4-comments" class="tab-pane wrapper-md no-js-show" role="tabpanel">
+<h3 class="widget-title m-t-none text-md">最新評論</h3>
+<ul class="list-group no-borders pull-in auto m-b-none">
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4576" class="pull-left thumb-sm avatar m-r">
+<img nogallery src="picture/a210d94017a34b969ff3b17e31c2f79b.gif" class="avatar-40 photo img-circle" style="height:40px!important; width: 40px!important;"> </a>
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4576" class="text-muted">
+<i class="fa fa-comment-o pull-right m-t-sm text-sm" title="詳情" aria-hidden="true" data-toggle="tooltip" data-placement="auto left"></i>
+<span class="sr-only">評論詳情</span>
+</a>
+<div class="clear">
+<div class="text-ellipsis">
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4576" title="jcomey"> jcomey </a>
+</div>
+<small class="text-muted"><span>摩羯座</span>
+</small>
+</div>
+</li>
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4575" class="pull-left thumb-sm avatar m-r">
+<img nogallery src="picture/f16f74185b4d414fa127a42783afb319.gif" class="avatar-40 photo img-circle" style="height:40px!important; width: 40px!important;"> </a>
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4575" class="text-muted">
+<i class="fa fa-comment-o pull-right m-t-sm text-sm" title="詳情" aria-hidden="true" data-toggle="tooltip" data-placement="auto left"></i>
+<span class="sr-only">評論詳情</span>
+</a>
+<div class="clear">
+<div class="text-ellipsis">
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4575" title="LiarOnce"> LiarOnce </a>
+</div>
+<small class="text-muted"><span>我期中考刚刚考完
+一说11月刚好我弟过生日，真巧</span>
+</small>
+</div>
+</li>
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4573" class="pull-left thumb-sm avatar m-r">
+<img nogallery src="picture/313d2d1e6f6f40cc9006ae489f18ea19.gif" class="avatar-40 photo img-circle" style="height:40px!important; width: 40px!important;"> </a>
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4573" class="text-muted">
+<i class="fa fa-comment-o pull-right m-t-sm text-sm" title="詳情" aria-hidden="true" data-toggle="tooltip" data-placement="auto left"></i>
+<span class="sr-only">評論詳情</span>
+</a>
+<div class="clear">
+<div class="text-ellipsis">
+<a href="https://www.ihewro.com/archives/737/comment-page-1#comment-4573" title="蔡锶铎"> 蔡锶铎 </a>
+</div>
+<small class="text-muted"><span>我现在已经开始被中考逼着了 绝望的一批 （这么巧我今天生日）</span>
+</small>
+</div>
+</li>
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/489/comment-page-1#comment-4571" class="pull-left thumb-sm avatar m-r">
+<img nogallery src="picture/99a9dbc6665f47e2bbbb988de927507e.gif" class="avatar-40 photo img-circle" style="height:40px!important; width: 40px!important;"> </a>
+<a href="https://www.ihewro.com/archives/489/comment-page-1#comment-4571" class="text-muted">
+<i class="fa fa-comment-o pull-right m-t-sm text-sm" title="詳情" aria-hidden="true" data-toggle="tooltip" data-placement="auto left"></i>
+<span class="sr-only">評論詳情</span>
+</a>
+<div class="clear">
+<div class="text-ellipsis">
+<a href="https://www.ihewro.com/archives/489/comment-page-1#comment-4571" title="KeerDi"> KeerDi </a>
+</div>
+<small class="text-muted"><span>后生可畏，后生可畏啊！</span>
+</small>
+</div>
+</li>
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/734/comment-page-1#comment-4570" class="pull-left thumb-sm avatar m-r">
+<img nogallery src="picture/907c0e1478c3482b91561db32d49b00c.gif" class="avatar-40 photo img-circle" style="height:40px!important; width: 40px!important;"> </a>
+<a href="https://www.ihewro.com/archives/734/comment-page-1#comment-4570" class="text-muted">
+<i class="fa fa-comment-o pull-right m-t-sm text-sm" title="詳情" aria-hidden="true" data-toggle="tooltip" data-placement="auto left"></i>
+<span class="sr-only">評論詳情</span>
+</a>
+<div class="clear">
+<div class="text-ellipsis">
+<a href="https://www.ihewro.com/archives/734/comment-page-1#comment-4570" title="Yprisoner"> Yprisoner </a>
+</div>
+<small class="text-muted"><span>哇，主题更新了(๑`･ᴗ･´๑)。忽然觉得大学再多一年就好了~...</span>
+</small>
+</div>
+</li>
+</ul>
+</div>
+<div id="widget-tabs-4-random" class="tab-pane wrapper-md no-js-show" role="tabpanel">
+<h3 class="widget-title m-t-none text-md">隨機文章</h3>
+<ul class="list-group no-bg no-borders pull-in m-b-none">
+<li class="list-group-item">
+<a href="https://www.ihewro.com/archives/694/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/8.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/694/" title="为js动态创建的元素绑定事件"> 为js动态创建的元素绑定事件 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">6</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">1619</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/458/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/9.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/458/" title="此内容被密码保护"> 此内容被密码保护 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">0</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">711</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/465/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/2_1.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/465/" title="现代科技在学习中应用的利与弊"> 现代科技在学习中应用的利与弊 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">4</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">1140</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/619/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/7.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/619/" title="腾讯云“云+校园计划”学生机自动抢购脚本"> 腾讯云“云+校园计划”学生机自动抢购脚本 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">39</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">12326</span>
+</span>
+</small>
+</div>
+</li><li class="list-group-item">
+<a href="https://www.ihewro.com/archives/479/" class="pull-left thumb-sm m-r">
+<img style="height: 40px!important;width: 40px!important;" src="picture/15_1.jpg" class="img-circle wp-post-image">
+</a>
+<div class="clear">
+<h4 class="h5 l-h"> <a href="https://www.ihewro.com/archives/479/" title="我们是不是一定要这么着急"> 我们是不是一定要这么着急 </a></h4>
+<small class="text-muted">
+<span class="meta-views"> <i class="iconfont icon-comments" aria-hidden="true"></i> <span class="sr-only">评论数：</span> <span class="meta-value">4</span>
+</span>
+<span class="meta-date m-l-sm"> <i class="fa fa-eye" aria-hidden="true"></i> <span class="sr-only">浏览次数:</span> <span class="meta-value">1232</span>
+</span>
+</small>
+</div>
+</li> </ul>
+</div>
+</div>
+</section>
+<section id="categories-2" class="widget widget_categories wrapper-md clear">
+<h3 class="widget-title m-t-none text-md">分類</h3>
+<ul class="list-group">
+<li class="list-group-item"> <a href="https://www.ihewro.com/category/tech/"> <span class="badge pull-right">37</span>设计开发</a></li><li class="list-group-item"> <a href="https://www.ihewro.com/category/share/"> <span class="badge pull-right">33</span>资源技巧</a></li><li class="list-group-item"> <a href="https://www.ihewro.com/category/hobby/"> <span class="badge pull-right">8</span>兴趣爱好</a></li><li class="list-group-item"> <a href="https://www.ihewro.com/category/life/"> <span class="badge pull-right">58</span>生活随笔</a></li><li class="list-group-item"> <a href="https://www.ihewro.com/category/others/"> <span class="badge pull-right">5</span>文章杂烩</a></li> </ul>
+</section>
+<section id="tag_toc" class="widget widget_categories wrapper-md clear">
+<h3 class="widget-title m-t-none text-md">文章目錄</h3>
+<div class="tags l-h-2x">
+<div id="toc"></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<footer id="footer" class="app-footer" role="footer">
+<div class="wrapper b-t bg-light">
+<span class="pull-right hidden-xs">
+<a href="http://www.miitbeian.gov.cn/" target="_blank">京ICP备17006801号</a> Powered by <a target="blank" href="http://www.typecho.org">Typecho</a>&nbsp;|&nbsp;Theme by <a target="blank" href="https://www.ihewro.com/archives/489/">handsome</a>
+</span>
+&copy;&nbsp;2017 Copyright&nbsp;<a target="_blank" href="https://www.upyun.com/index.html"><img src="picture/c1c281c78e1743e699c9a5aa6ad8a444.gif" style="width: 70px;"></a>&nbsp; 提供CDN服务 </div>
+<script type="text/template" id="tmpl-customizer">
+          <div class="settings panel panel-default setting_body_panel" aria-hidden="true">
+              <button class="btn btn-default no-shadow pos-abt" data-toggle="tooltip" data-placement="left" data-original-title="設置" data-toggle-class=".settings=active, .settings-icon=animate-spin">
+                  <i class="fa fa-gear settings-icon"></i>
+              </button>
+              <div class="panel-heading">
+                  <button class="pull-right btn btn-xs btn-rounded btn-danger" name="reset" data-toggle="tooltip" data-placement="top" data-original-title="恢復默認值" >重置</button>
+                  設置		</div>
+              <div class="setting_body">
+              <div class="panel-body">
+                  <# for ( var keys = _.keys( data.sections.settings ), i = 0, name; keys.length > i; ++i ) { #>
+                      <div<# if ( i !== ( keys.length - 1 ) ) print( ' class="m-b-sm"' ); #>>
+                          <label class="i-switch bg-info pull-right">
+                              <input type="checkbox" name="{{ keys[i] }}" value="1"<# if ( data.defaults[keys[i]] ) print( ' checked="checked"' ); #> />
+                                  <i></i>
+                          </label>
+                          {{ data.sections.settings[keys[i]] }}
+              </div>
+              <# } #>
+          </div>
+          <div class="wrapper b-t b-light bg-light lter r-b">
+              <div class="row row-sm">
+                  <div class="col-xs-6">
+                      <#
+                              _.each( data.sections.colors, function( color, i ) {
+                              var newColumnBefore = ( i % 7 ) === 6;
+                              #>
+                          <label class="i-checks block<# if ( !newColumnBefore ) print( ' m-b-sm' ); #>">
+                              <input type="radio" name="color" value="{{ i }}"<# if ( data.defaults['color'] === i ) print( ' checked="checked"' ); #> />
+                                  <span class="block bg-light clearfix pos-rlt">
+								<span class="active pos-abt w-full h-full bg-black-opacity text-center">
+									<i class="fa fa-check text-md text-white m-t-xs"></i>
+								</span>
+								<b class="{{ color.navbarHeader }} header"></b>
+								<b class="{{ color.navbarCollapse }} header"></b>
+								<b class="{{ color.aside.replace( ' b-r', '' ) }}"></b>
+							</span>
+                          </label>
+                          <#
+                                  if ( newColumnBefore && ( i + 1 ) < data.sections.colors.length )
+                          print( '</div><div class="col-xs-6">' );
+                              } );
+                              #>
+                          </div>
+                  </div>
+              </div>
+          </div>
+          </div>
+      </script>
+<div class="topButton panel panel-default">
+<button id="goToTop" class="btn btn-default no-shadow pos-abt hide">
+<i class="fa fa-chevron-circle-up" aria-hidden="true"></i>
+</button>
+</div>
+</footer>
+</div><!--end of .app app-header-fixed-->
+<script type="text/javascript" src="js/meting.min_1.js"></script>
+<script type="text/javascript">window['LocalConst'] ={COMMENT_NAME_INFO:'必須填寫暱稱或姓名',COMMENT_EMAIL_INFO:'必須填寫電子郵箱地址',COMMENT_EMAIL_LEGAL_INFO:'郵箱地址不合法',COMMENT_CONTENT_INFO:'必須填寫評論內容',COMMENT_SUBMIT_ERROR:'提交失敗，請重試！',COMMENT_CONTENT_LEGAL_INFO:'提交失敗,您的輸入內容不符合規則！',LOGIN_USERNAME_INFO:'必須填寫用戶名',LOGIN_PASSWORD_INFO:'請填寫密碼',LOGIN_SUBMIT_ERROR:'登錄失敗，請重新登錄',LOGIN_SUBMIT_INFO:'用戶名或者密碼錯誤，請重試',LOGIN_SUBMIT_SUCCESS:'登錄成功',LOGOUT_SUCCESS_REFRESH:'退出成功，正在刷新當前頁面',LOGOUT_ERROR:'退出失敗，請重試',LOGOUT_SUCCESS:'退出成功',SUBMIT_PASSWORD_INFO:'密碼錯誤，請重試',ChANGYAN_APP_KEY:'',CHANGYAN_CONF:'',COMMENT_SYSTEM:'0',COMMENT_SYSTEM_ROOT:'0',COMMENT_SYSTEM_CHANGYAN:'1',COMMENT_SYSTEM_OTHERS:'2',EMOJI:'表情',IS_PJAX:'1',IS_PAJX_COMMENT:'1',BASE_SCRIPT_URL:'https://www.ihewro.com/usr/themes/handsome/',THEME_COLOR:'8',THEME_HEADER_FIX:'1',THEME_ASIDE_FIX:'1',THEME_ASIDE_FOLDED:'',THEME_ASIDE_DOCK:'',THEME_CONTAINER_BOX:'1',THEME_HIGHLIGHT_CODE:'1',THEME_TOC:'1',TOC_TITLE:'文章目錄',HEADER_FIX:'固定頭部',ASIDE_FIX:'固定導航',ASIDE_FOLDED:'折疊導航',ASIDE_DOCK:'置頂導航',CONTAINER_BOX:'盒子模型',OFF_SCROLL_HEIGHT:'50',COMMENT_REJECT_PLACEHOLDER:'居然什么也不说，哼',COMMENT_PLACEHOLDER:'说点什么吧……'
+};</script>
+<script src="js/bootstrap.min_1.js"></script>
+<script src="js/jquery.pjax.min_1.js" type="text/javascript"></script>
+<script>$(document).pjax('a[href^="https://www.ihewro.com/"]:not(a[target="_blank"], a[no-pjax])',{container:'#content',fragment:'#content',timeout:8000
+}).on('pjax:start',function() {window['Page'].doPJAXSendAction();}).on('pjax:complete',function() {window['Page'].doPJAXCompleteAction();})
+</script>
+<script src="js/jquery.fancybox.min_1.js"></script>
+<script src="js/owo.min_1.js"></script>
+<script src="js/music.min_1.js"></script>
+<script>var player =new skPlayer({autoplay:false,listshow:false,mode:'listloop',music:{type:'cloud',source:'888233349',media:'tencent',} });</script>
+<script src="js/function.min_1.js"></script>
+<script src="js/core.min_1.js"></script>
+<script data-no-instant type="text/javascript"></script>
+</body><!--#body end-->
+</html>
