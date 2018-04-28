@@ -15,6 +15,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'enableCookieValidation' => false,//关闭csrf验证
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -37,11 +38,19 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+//        'urlManager' => [
+//            'enablePrettyUrl' => true,
+//            'showScriptName' => false,
+//            'suffix'=>'.html',
+//            'rules' => [
+//            ],
+//        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'suffix'=>'.html',
+            'enableStrictParsing' => false,
             'rules' => [
+
             ],
         ],
 
