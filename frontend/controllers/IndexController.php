@@ -55,7 +55,7 @@ class IndexController extends Controller{
             ->asArray()
             ->all();
         foreach ($model as &$item){
-            $content=Helper::html($model['content'],37);
+            $content=Helper::html($item['content'],37);
             $item['content']=[mb_substr($content,0,19),mb_substr($content,19)];
         }
         Helper::response($model);
