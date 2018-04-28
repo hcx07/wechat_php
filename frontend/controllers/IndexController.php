@@ -10,9 +10,7 @@ namespace frontend\controllers;
 use Yii;
 use backend\helpers\Helper;
 use backend\models\Article;
-use backend\models\Category;
 use backend\models\Guestbook;
-use yii\data\Pagination;
 use yii\web\Controller;
 
 class IndexController extends Controller{
@@ -27,6 +25,19 @@ class IndexController extends Controller{
     }
 
     /**
+     * 获取首页推荐文章
+     */
+    public function actionGetTop(){
+        $model=Article::find()
+            ->where(['status'=>1])
+            ->orderBy('is_top desc,created_time desc')
+            ->asArray()
+            ->one();
+        $time=date('Y-m-d H:i',$model['created_time']);
+        $model['other']=$time;
+        Helper::response($model);
+    }
+    /**
      * @return string
      * 首页
      */
@@ -36,6 +47,7 @@ class IndexController extends Controller{
         $offset = intval(($page-1)*$limit);
         $query=Article::find();
         $model=$query
+            ->where(['status'=>1])
             ->limit($limit)
             ->offset($offset)
             ->orderBy(['article.is_top'=>SORT_DESC,'article.created_time'=>SORT_DESC])
@@ -55,7 +67,7 @@ class IndexController extends Controller{
      */
     public function actionGetInfo($article_id){
         $model=Article::find()
-            ->where(['article_id'=>$article_id])
+            ->where(['article_id'=>$article_id,'status'=>1])
             ->asArray()
             ->one();
         $time=date('Y-m-d H:i',$model['created_time']);
