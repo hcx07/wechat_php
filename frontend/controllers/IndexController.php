@@ -35,6 +35,7 @@ class IndexController extends Controller{
             ->one();
         $time=date('Y-m-d H:i',$model['created_time']);
         $model['other']=$time;
+        $model['content']=mb_substr(strip_tags($model['content']),0,200).'...';;
         Helper::response($model);
     }
     /**
