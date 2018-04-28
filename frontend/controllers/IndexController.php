@@ -35,7 +35,7 @@ class IndexController extends Controller{
             ->one();
         $time=date('Y-m-d H:i',$model['created_time']);
         $model['other']=$time;
-        $model['content']=Helper::html($model['content'],200).'...';
+        $model['content']=Helper::html($model['content'],180);
         Helper::response($model);
     }
     /**
@@ -55,7 +55,7 @@ class IndexController extends Controller{
             ->asArray()
             ->all();
         foreach ($model as &$item){
-            $item['content']=Helper::html($item['content'],37);
+            $item['content']=Helper::html($item['content'],50);
 //            $item['content']=[mb_substr($content,0,19),mb_substr($content,19)];
         }
         Helper::response($model);
